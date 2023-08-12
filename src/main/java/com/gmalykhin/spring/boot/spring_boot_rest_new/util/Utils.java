@@ -1,7 +1,7 @@
 package com.gmalykhin.spring.boot.spring_boot_rest_new.util;
 
 import com.gmalykhin.spring.boot.spring_boot_rest_new.entity.Department;
-import com.gmalykhin.spring.boot.spring_boot_rest_new.entity.EntityMarker;
+import com.gmalykhin.spring.boot.spring_boot_rest_new.entity.BaseEntity;
 import com.gmalykhin.spring.boot.spring_boot_rest_new.exception_handling.IncorrectFieldData;
 import org.springframework.validation.FieldError;
 
@@ -61,7 +61,7 @@ public final class Utils {
 
     // Проверка если при создании нового entity (PostMapping) какие-либо из полей были пропущены,
     // т.е. они null, тогда приводится список пропущенных полей, которые должны быть заполнены
-    public static <T extends EntityMarker> void checkEntityFieldsIfNull(T entity) {
+    public static <T extends BaseEntity> void checkEntityFieldsIfNull(T entity) {
 
         var entityFields = entity.getClass().getDeclaredFields();
         var listOfNullFields = new StringBuilder();
@@ -92,7 +92,7 @@ public final class Utils {
 
     // Проверка если при изменении entity (PutMapping) какие-либо из полей были пропущены,
     // т.е. они null, тогда они заполняются прежним значением
-    public static <T extends EntityMarker> void checkEntityFieldsIfNullThenFill(T entity, T repoEntity) {
+    public static <T extends BaseEntity> void checkEntityFieldsIfNullThenFill(T entity, T repoEntity) {
 
         var entityFields = entity.getClass().getDeclaredFields();
         var repoEntityFields = repoEntity.getClass().getDeclaredFields();

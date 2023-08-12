@@ -10,7 +10,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>com.g.malykhin.spring.boot</groupId>
+    <groupId>com.gmalykhin.spring.boot</groupId>
     <artifactId>Spring_Boot_REST_new</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Spring_Boot_REST_new</name>

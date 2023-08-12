@@ -41,7 +41,7 @@ public class MyServiceImpl implements MyService {
     }
 
     @Override
-    public Employee getEmployee(int id) throws NoSuchEntityFoundInDBException {
+    public Employee getEmployee(int id) {
         return employeeRepository.findById(id).orElseThrow( () -> new NoSuchEntityFoundInDBException(id));
     }
 
@@ -51,7 +51,7 @@ public class MyServiceImpl implements MyService {
     }
 
     @Override
-    public Department getDepartment(int id) throws NoSuchEntityFoundInDBException {
+    public Department getDepartment(int id) {
         return departmentRepository.findById(id).orElseThrow( () -> new NoSuchEntityFoundInDBException(id));
     }
 
@@ -86,7 +86,7 @@ public class MyServiceImpl implements MyService {
     }
 
     @Override
-    public void existenceOfTheDepartmentWithSuchNameInDB(String departmentName) throws IncorrectFieldData {
+    public void existenceOfTheDepartmentWithSuchNameInDB(String departmentName) {
         if (departmentRepository.getDepartmentByDepartmentName(departmentName) != null) {
             throw new IncorrectFieldData("The value of the departmentName field must be unique");
         }
@@ -95,17 +95,17 @@ public class MyServiceImpl implements MyService {
     /* Проверка - существует ли департамент с таким id, а так же какие поля указаны
      * Для удобства ввода и во избежание ошибок ввода осталено только поле id у департамента,
      * остальные поля заполняются автоматически далее по коду.
-     * Поэтому если указаны лишние поля, то выбрасывается исключение
-     */
+     * Поэтому если указаны лишние поля, то выбрасывается исключение */
     @Override
-    public Employee checkEmployeesDepartmentFields (Employee employee) throws NoSuchEntityFoundInDBException
-                                                                                        , IncorrectFieldData {
-        int departmentId = employee.getDepartment().getId();
-        if (this.getDepartment(departmentId) == null) {
-            throw new NoSuchEntityFoundInDBException(departmentId);
-        } else if (employee.getDepartment().getDepartmentName() != null
-                || employee.getDepartment().getMinSalary() != null
-                || employee.getDepartment().getMaxSalary() != null) {
+    public Employee checkEmployeesDepartmentFields (Employee employee) {
+        var departmentId = employee.getDepartment().getId();
+
+        this.getDepartment(departmentId);
+        var jsonDepartment = employee.getDepartment();
+
+        if (jsonDepartment.getDepartmentName() != null
+                || jsonDepartment.getMinSalary() != null
+                || jsonDepartment.getMaxSalary() != null) {
             throw new IncorrectFieldData("Write only the id field for the department");
         } else {
             employee.setDepartment(getDepartment(departmentId));
@@ -116,8 +116,7 @@ public class MyServiceImpl implements MyService {
     /* Проверка если поменялось значение minSalary или maxSalary в department, то берется список
      * employee в этом department и у каждого проверяется попадание salary в диапазон minSalary - maxSalary.
      * Если salary меньше, чем minSalary, тогда salary присваивается значение minSalary.
-     * Если salary больше, чем maxSalary, тогда salary присваивается значение maxSalary.
-     */
+     * Если salary больше, чем maxSalary, тогда salary присваивается значение maxSalary. */
     @Override
     public boolean checkEmpsSalaryIfMinOrMaxSalaryWasEdited(Department department) {
 

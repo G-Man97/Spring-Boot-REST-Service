@@ -17,32 +17,37 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "employees")
-public class Employee extends EntityMarker {
-
-    private int id;
-    private String name;
-    private String surname;
-    private LocalDate birthday;
-    private Double salary;
-    private Department department;
-
-    public Employee() {
-    }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+public class Employee extends BaseEntity {
 
     @Column(name = "name")
     @Pattern(regexp = "([A-Za-z]+)", message = " The name field must contains only A-Z or a-z symbols ")
     @Size(min = 2, max = 25, message = " The name field must have min 2 symbols max 25 symbols ")
+    private String name;
+
+    @Column(name = "surname")
+    @Pattern(regexp = "([A-Za-z]+)", message = " The surname field must contains only A-Z or a-z symbols ")
+    @Size(min = 2, max = 25, message = " The surname field must have min 2 symbols max 25 symbols ")
+    private String surname;
+
+    @Column(name = "birthday")
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @Past(message = " The birthday field must contain the past date ")
+    private LocalDate birthday;
+
+    @Column(name = "salary")
+    @DecimalMin(value = "500", message = " The salary field must have a min value of 500 ")
+    @DecimalMax(value = "1000000", inclusive = false,
+            message = " The salary field must have a max value of 999999.99 ")
+    private Double salary;
+
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumn(name = "department_id")
+    @NotFound(action = NotFoundAction.IGNORE)
+    @JsonIgnoreProperties({"minSalary", "maxSalary"})
+    private Department department;
+
     public String getName() {
         return name;
     }
@@ -51,9 +56,6 @@ public class Employee extends EntityMarker {
         this.name = name;
     }
 
-    @Column(name = "surname")
-    @Pattern(regexp = "([A-Za-z]+)", message = " The surname field must contains only A-Z or a-z symbols ")
-    @Size(min = 2, max = 25, message = " The surname field must have min 2 symbols max 25 symbols ")
     public String getSurname() {
         return surname;
     }
@@ -62,11 +64,6 @@ public class Employee extends EntityMarker {
         this.surname = surname;
     }
 
-    @Column(name = "birthday")
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    @JsonSerialize(using = LocalDateSerializer.class)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @Past(message = " The birthday field must contain the past date ")
     public LocalDate getBirthday() {
         return birthday;
     }
@@ -75,10 +72,6 @@ public class Employee extends EntityMarker {
         this.birthday = birthday;
     }
 
-    @Column(name = "salary")
-    @DecimalMin(value = "500", message = " The salary field must have a min value of 500 ")
-    @DecimalMax(value = "1000000", inclusive = false,
-            message = " The salary field must have a max value of 999999.99 ")
     public Double getSalary() {
         return salary;
     }
@@ -87,10 +80,6 @@ public class Employee extends EntityMarker {
         this.salary = salary;
     }
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "department_id")
-    @NotFound(action = NotFoundAction.IGNORE)
-    @JsonIgnoreProperties({"minSalary", "maxSalary"})
     public Department getDepartment() {
         return department;
     }

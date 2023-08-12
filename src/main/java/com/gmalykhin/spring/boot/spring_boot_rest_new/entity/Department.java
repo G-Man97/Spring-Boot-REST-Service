@@ -9,31 +9,31 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "departments")
-public class Department extends EntityMarker {
-
-    private int id;
-    private String departmentName;
-    private Double minSalary;
-    private Double maxSalary;
-    private List<Employee> employee;
-
-    public Department() {
-    }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+public class Department extends BaseEntity {
 
     @Column(name = "name" , unique = true)
     @Pattern(regexp = "([A-Za-z_]+)", message = "The name field must contains only A-Z, a-z or underscore symbols")
     @Size(min = 2, max = 25, message = " The name field must have min 2 symbols max 25 symbols ")
+    private String departmentName;
+
+    @Column(name = "min_salary")
+    @DecimalMin(value = "500", message = " The minSalary field must have a min value of 500 ")
+    @DecimalMax(value = "1000000", inclusive = false,
+            message = " The minSalary field must have a max value of 999999.99 ")
+    private Double minSalary;
+
+    @Column(name = "max_salary")
+    @DecimalMin(value = "500", message = " The maxSalary field must have a min value of 500 ")
+    @DecimalMax(value = "1000000", inclusive = false,
+            message = " The maxSalary field must have a max value of 999999.99 ")
+    private Double maxSalary;
+
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH}, mappedBy = "department")
+    @JsonIgnore
+//  @JsonIgnoreProperties("department")
+    private List<Employee> employee;
+
+
     public String getDepartmentName() {
         return departmentName;
     }
@@ -42,10 +42,7 @@ public class Department extends EntityMarker {
         this.departmentName = departmentName;
     }
 
-    @Column(name = "min_salary")
-    @DecimalMin(value = "500", message = " The minSalary field must have a min value of 500 ")
-    @DecimalMax(value = "1000000", inclusive = false,
-            message = " The minSalary field must have a max value of 999999.99 ")
+
     public Double getMinSalary() {
         return minSalary;
     }
@@ -54,10 +51,7 @@ public class Department extends EntityMarker {
         this.minSalary = minSalary;
     }
 
-    @Column(name = "max_salary")
-    @DecimalMin(value = "500", message = " The maxSalary field must have a min value of 500 ")
-    @DecimalMax(value = "1000000", inclusive = false,
-            message = " The maxSalary field must have a max value of 999999.99 ")
+
     public Double getMaxSalary() {
         return maxSalary;
     }
@@ -66,9 +60,6 @@ public class Department extends EntityMarker {
         this.maxSalary = maxSalary;
     }
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH}, mappedBy = "department")
-    @JsonIgnore
-//  @JsonIgnoreProperties("department")
     public List<Employee> getEmployee() {
         return employee;
     }
@@ -82,7 +73,7 @@ public class Department extends EntityMarker {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Department that = (Department) o;
-        return id == that.id && departmentName.equals(that.departmentName)
+        return this.id== that.id && departmentName.equals(that.departmentName)
                 && (Double.compare(minSalary, that.minSalary) == 0)
                 && (Double.compare(maxSalary, that.maxSalary) == 0);
     }
