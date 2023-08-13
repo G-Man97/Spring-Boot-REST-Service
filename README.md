@@ -31,7 +31,6 @@
 - Spring Data JPA
 - Spring Hibernnate
 - Spring MVC
-- Spring ORM
 - JUnit
 - Mockito
 - JACKSON
