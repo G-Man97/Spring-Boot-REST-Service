@@ -34,3 +34,4 @@
 - JUnit
 - Mockito
 - JACKSON
+- Maven
